@@ -1,0 +1,57 @@
+<project name="Media Library" default="build">
+	<target name="build" depends="clean, client, exampleclient, exampleserver" />
+	<target name="clean">
+		<echo message="Cleaning" />
+		<delete includeEmptyDirs="true">
+			<fileset dir="." includes="client.jar exampleclient.jar exampleserver.jar proxy.jar" />
+			<fileset dir="bin" />
+		</delete>
+		<mkdir dir="bin" />
+	</target>
+	<target name="client">
+		<javac includeAntRuntime="false" srcdir="src" destdir="bin" classpath="grail.jar:sqlitejdbc-v056.jar" includes="ui/ClientWindow.java" />
+		<jar basedir="bin" jarfile="client.jar" includes="**/*.class">
+			<manifest>
+				<attribute name="Main-Class" value="ui.ClientWindow" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="exampleclient">
+		<javac includeAntRuntime="false" srcdir="src" destdir="bin" classpath="grail.jar" includes="ExampleClient.java cajo/sdk/ProxyLoader.java proxy/*.java" />
+		<jar basedir="bin" jarfile="exampleclient.jar" includes="**/*.class">
+			<manifest>
+				<attribute name="Main-Class" value="ExampleClient" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="exampleserver">
+		<javac includeAntRuntime="false" debug="on" debuglevel="lines, vars, source" srcdir="src" destdir="bin" classpath="grail.jar" includes="ExampleServer.java proxy/*.java" />
+		<jar basedir="bin" jarfile="exampleserver.jar" includes="**/*.class">
+			<manifest>
+				<attribute name="Main-Class" value="ExampleServer" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="startclient">
+		<java fork="true" failonerror="true" classname="ui.ClientWindow" classpath="grail.jar:sqlitejdbc-v056.jar:client.jar" />
+	</target>
+	<target name="startexampleclient">
+		<java fork="true" failonerror="true" classname="ExampleClient" classpath="grail.jar:exampleclient.jar">
+			<sysproperty key="java.security.manager" value="" />
+			<sysproperty key="java.security.policy" value="security.policy" />
+		</java>
+	</target>
+	<target name="startexampleserver">
+		<java fork="true" failonerror="true" classname="ExampleServer" classpath="grail.jar:exampleserver.jar">
+			<sysproperty key="java.security.manager" value="" />
+			<sysproperty key="java.security.policy" value="security.policy" />
+		</java>
+	</target>
+	<target name="javadoc">
+		<delete dir="doc/javadoc" />
+		<mkdir dir="doc/javadoc" />
+		<javadoc destdir="doc/javadoc" overview="src/overview.html" linksource="yes" windowtitle="Media Library Project">
+			<fileset dir="src" />
+		</javadoc>
+	</target>
+</project>
